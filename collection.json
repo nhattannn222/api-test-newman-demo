@@ -1,0 +1,126 @@
+{
+  "info": {
+    "name": "Reqres API - Demo Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login - POST /api/login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"eve.holt@reqres.in\", \"password\": \"cityslicka\"}"
+        },
+        "url": { "raw": "{{base_url}}/api/login", "host": ["{{base_url}}"], "path": ["api","login"] }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Login status is 200\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "var json = pm.response.json();",
+              "pm.test(\"Login returns token\", function () { pm.expect(json.token).to.exist; });",
+              "// Save token to environment",
+              "if (json.token) { pm.environment.set(\"token\", json.token); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Users - GET /api/users?page=2",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/users?page=2", "host": ["{{base_url}}"], "path": ["api","users"], "query": [{ "key": "page", "value": "2" }] }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Get users status is 200\", function () { pm.response.to.have.status(200); });",
+              "var json = pm.response.json();",
+              "pm.test(\"Has data array\", function () { pm.expect(json.data).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create User - POST /api/users",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+        "body": { "mode": "raw", "raw": "{\"name\":\"morpheus\",\"job\":\"leader\"}" },
+        "url": { "raw": "{{base_url}}/api/users", "host": ["{{base_url}}"], "path": ["api","users"] }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Create user status 201\", function () { pm.response.to.have.status(201); });",
+              "var json = pm.response.json();",
+              "pm.test(\"Response has id\", function () { pm.expect(json.id).to.exist; });",
+              "pm.environment.set('createdUserId', json.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update User - PUT /api/users/2",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+        "body": { "mode": "raw", "raw": "{\"name\":\"morpheus\",\"job\":\"zion resident\"}" },
+        "url": { "raw": "{{base_url}}/api/users/2", "host": ["{{base_url}}"], "path": ["api","users","2"] }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Update user status 200\", function () { pm.response.to.have.status(200); });",
+              "var json = pm.response.json();",
+              "pm.test(\"Updated job present\", function () { pm.expect(json.job).to.eql('zion resident'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete User - DELETE /api/users/2",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{base_url}}/api/users/2", "host": ["{{base_url}}"], "path": ["api","users","2"] }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete returns 204 or 200\", function () {",
+              "  pm.expect([200,204]).to.include(pm.response.code);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "info": { "name": "Local Env", "_postman_id": "env-1", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/environment.json" },
+  "values": [
+    { "key": "base_url", "value": "https://reqres.in", "type": "text" },
+    { "key": "token", "value": "", "type": "text" },
+    { "key": "createdUserId", "value": "", "type": "text" }
+  ]
+}
